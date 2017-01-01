@@ -1,0 +1,21 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "indent": [2, 4, {"SwitchCase": 1}],
+    "linebreak-style": [2, "unix"],
+    "no-console": 0,
+    "no-debugger": 0,
+    "max-len": [0, 140, 2],
+    "react": "off",
+    "jsx-a11y": "off",
+
+    "import/no-extraneous-dependencies": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+  }
+}
