@@ -13,6 +13,7 @@
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.10",
     "babel-plugin-transform-object-rest-spread": "^6.20.2",
+    "chalk": "^1.1.3",
     "eslint": "3.6.0",
     "eslint-config-airbnb": "12.0.0",
     "eslint-loader": "1.5.0",
@@ -20,6 +21,8 @@
     "eslint-plugin-jsx-a11y": "2.2.2",
     "eslint-plugin-react": "6.3.0",
     "json-loader": "^0.5.4",
-    "simple-node-logger": "^0.93.14"
+    "readline-sync": "^1.4.5",
+    "simple-node-logger": "^0.93.14",
+    "sleep": "^5.0.0"
   }
 }

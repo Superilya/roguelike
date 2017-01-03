@@ -1,6 +1,4 @@
-const field = require('field');
-
-module.exports = ({ x, y }) => {
+module.exports = ({ x, y }, field) => {
     const row = field[y];
 
     if (!row) return false;

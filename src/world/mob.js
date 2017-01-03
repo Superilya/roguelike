@@ -12,14 +12,14 @@ module.exports = class Mob {
         this.pos = { x, y };
     }
 
-    run() {
+    run(field) {
         const direction = directions[Math.round(Math.random() * 3)];
         const moveCell = {
             x: this.pos.x + direction.x,
             y: this.pos.y + direction.y,
         };
 
-        if (canMove(moveCell)) {
+        if (canMove(moveCell, field)) {
             this.pos = moveCell;
         }
     }

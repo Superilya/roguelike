@@ -10,6 +10,7 @@
     "linebreak-style": [2, "unix"],
     "no-console": 0,
     "no-debugger": 0,
+    "no-param-reassign": "off",
     "max-len": [0, 140, 2],
     "react": "off",
     "jsx-a11y": "off",

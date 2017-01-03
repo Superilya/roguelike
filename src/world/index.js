@@ -1,32 +1,40 @@
 const Prota = require('./prota');
 const Mob = require('./mob');
+const History = require('history');
 
-const field = require('field');
+const mainField = require('field');
 
-const writer = require('writer');
+const write = require('writer');
 const camera = require('camera');
 
-class World {
+module.exports = class World {
     constructor() {
-        this.prota = new Prota({ x: 4, y: 4 });
+        this.history = new History();
+
+        this.prota = new Prota({ x: 4, y: 4 }, this.history.protaAction);
         this.mobs = [
+            new Mob({ x: 7, y: 7 }),
+            new Mob({ x: 7, y: 7 }),
+            new Mob({ x: 7, y: 7 }),
             new Mob({ x: 7, y: 7 }),
         ];
     }
 
     run() {
-        const cloneField = [...field].map(row => [...row]);
-        this.prota.run();
+        const cloneField = mainField.getClone();
+        const field = mainField.get();
 
-        cloneField[this.prota.pos.y][this.prota.pos.x] = 3;
+        const newField = this.prota.run(field);
 
         this.mobs.forEach((mob) => {
-            mob.run();
+            mob.run(field);
             cloneField[mob.pos.y][mob.pos.x] = 4;
         });
 
-        writer(camera(this.prota.pos, cloneField));
-    }
-}
+        cloneField[this.prota.pos.y][this.prota.pos.x] = 3;
 
-module.exports = new World();
+        mainField.set(newField);
+
+        write.field(camera(this.prota.pos, cloneField));
+    }
+};
