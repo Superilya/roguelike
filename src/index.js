@@ -8,11 +8,11 @@ class Game {
     }
 
     runWorld() {
-        setTimeout(() => {
+        setTimeout(async () => {
             console.log('\x1Bc');
-            this.world.run();
+            await this.world.run();
             this.runWorld();
-        }, 100);
+        }, 130);
     }
 
     start() {

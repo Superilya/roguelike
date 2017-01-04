@@ -20,11 +20,11 @@ module.exports = class World {
         ];
     }
 
-    run() {
+    async run() {
         const cloneField = mainField.getClone();
         const field = mainField.get();
 
-        const newField = this.prota.run(field);
+        const newField = await this.prota.run(field);
 
         this.mobs.forEach((mob) => {
             mob.run(field);
@@ -33,8 +33,10 @@ module.exports = class World {
 
         cloneField[this.prota.pos.y][this.prota.pos.x] = 3;
 
-        mainField.set(newField);
+        const { pos } = this.prota;
 
+        write.toolbar(field[pos.y][pos.x]);
         write.field(camera(this.prota.pos, cloneField));
+        mainField.set(newField);
     }
 };

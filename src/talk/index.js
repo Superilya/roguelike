@@ -1,44 +1,30 @@
-const readlineSync = require('readline-sync');
+const writeQuestion = require('./question');
+const writePhrase = require('./phrase');
 
-const talk = (title, frame) => {
-    console.log('\x1Bc');
-
+const talk = async (title, frame) => {
     switch (frame.type) {
         case 'phrase': {
             const { tail, phrase } = frame;
 
-            console.log(`${title}: ${phrase}`);
-            readlineSync.keyInPause('', {
-                guide: false,
-            });
+            await writePhrase(title, phrase);
 
-            return tail ? [null, ...talk(title, tail)] : [null];
+            return tail ? [null, ...(await talk(title, tail))] : [null];
         }
         case 'question': {
             const { answers, phrase } = frame;
 
-            const index = readlineSync.keyInSelect(
+            const index = await writeQuestion(
+                title,
+                phrase,
                 answers.map(answer => answer.phrase),
-                `${title}: ${phrase}`,
-                { cancel: false }
             );
 
             const { tail } = answers[index];
 
-            return tail ? [index, ...talk(title, tail)] : [index];
+            return tail ? [index, ...(await talk(title, tail))] : [index];
         }
         default: return [null];
     }
 };
 
-module.exports = (title, frame) => {
-    const result = talk(title, frame);
-    console.log('\x1Bc');
-
-    const { stdin } = process; // todo делать свой readline-sync который не будет это проёбывать
-    stdin.setRawMode(true);
-
-    stdin.resume();
-
-    return result;
-};
+module.exports = talk;

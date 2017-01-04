@@ -1,14 +1,12 @@
 const keyGenerator = require('key');
 const canMove = require('can-move');
-
-const isAction = key => key === 'e';
-
-// const logger = require('logger');
+const viewInventory = require('view-inventory');
+const viewPause = require('view-pause');
 
 module.exports = class Proto {
     constructor({ x, y }, action) {
         this.pos = { x, y };
-        this.inventory = {};
+        this.inventory = { stone: 10 };
 
         this.action = action;
     }
@@ -24,38 +22,54 @@ module.exports = class Proto {
         }, this.inventory);
     }
 
-    getCellByKey(key) {
-        const { x, y } = this.pos;
-
-        switch (key) {
-            case 's': return { x, y: y + 1 };
-            case 'w': return { x, y: y - 1 };
-            case 'a': return { y, x: x - 1 };
-            case 'd': return { y, x: x + 1 };
-            default: return null;
+    move(moveCell, field) {
+        if (moveCell !== null && canMove(moveCell, field)) {
+            this.pos = moveCell;
         }
     }
 
-    run(field) {
+    async run(field) {
         const key = keyGenerator();
-        const moveCell = this.getCellByKey(key);
 
-        // logger.info(`key - ${key}`);
+        const { x, y } = this.pos;
 
-        if (moveCell !== null && canMove(moveCell, field)) {
-            this.pos = moveCell;
-        } else if (isAction(key)) {
-            const effects = this.action(this.pos, field);
-
-            if (effects !== null) {
-                const { inventory, field: newField } = effects;
-                this.addToInventory(inventory);
-
-                // logger.info(`inventory - ${JSON.stringify(this.inventory)}`);
-                return newField;
+        switch (key) {
+            case 's': {
+                this.move({ x, y: y + 1 }, field);
+                return field;
             }
-        }
+            case 'w': {
+                this.move({ x, y: y - 1 }, field);
+                return field;
+            }
+            case 'a': {
+                this.move({ y, x: x - 1 }, field);
+                return field;
+            }
+            case 'd': {
+                this.move({ y, x: x + 1 }, field);
+                return field;
+            }
+            case 'e': {
+                const effects = await this.action(this.pos, field, this.inventory);
 
-        return field;
+                if (effects !== null) {
+                    const { inventory = {}, field: newField = field } = effects;
+                    this.addToInventory(inventory);
+
+                    return newField;
+                }
+                return field;
+            }
+            case 'f': {
+                await viewInventory(this.inventory);
+                return field;
+            }
+            case '\u001b': {
+                await viewPause();
+                return field;
+            }
+            default: return field;
+        }
     }
 };

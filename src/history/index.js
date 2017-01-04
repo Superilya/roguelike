@@ -1,5 +1,4 @@
-const logger = require('logger');
-const talk = require('talk');
+const Smith = require('./smith');
 
 const pickUpStone = ({ x, y }, field) => {
     field[y][x] = 0;
@@ -14,47 +13,17 @@ const pickUpStone = ({ x, y }, field) => {
 
 module.exports = class History {
     constructor() {
-        this.isSmithMission = false;
+        this.smith = new Smith();
 
-        this.protaAction = (pos, field) => {
+        this.protaAction = async (pos, field, inventory) => {
             const { x, y } = pos;
             const cell = field[y][x];
 
             switch (cell) {
                 case 2: return pickUpStone(pos, field);
-                case 5: return this.sayWithSmith();
-                default: return { inventory: {}, field };
+                case 5: return await this.smith.say(inventory);
+                default: return null;
             }
         };
-    }
-
-    sayWithSmith(_, field) {
-        const talkResult = talk('Кузнец', {
-            type: 'question',
-            phrase: 'Привет, слушай у меня не хватает камней, найдёшь мне немного?',
-            answers: [
-                {
-                    phrase: 'Да давай',
-                    tail: {
-                        type: 'phrase',
-                        phrase: 'Ок давай мути жду',
-                        tail: {
-                            type: 'phrase',
-                            phrase: 'Дос',
-                        },
-                    },
-                },
-                {
-                    phrase: 'Нет, иди нах',
-                },
-            ],
-        });
-
-        if (talkResult[0] === 0) {
-            logger.info('Заебись поговорили');
-            this.isSmithMission = true;
-        }
-
-        return { inventory: {}, field };
     }
 };
